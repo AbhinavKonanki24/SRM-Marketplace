@@ -3,6 +3,7 @@ import './globals.css'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import { Home, Search, MessageSquare, User } from 'lucide-react'
+import StarBackground from '@/components/star-background'
 
 export const metadata: Metadata = {
   title: 'SRM Campus Marketplace',
@@ -20,6 +21,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col bg-[var(--color-background)] text-[var(--color-foreground)] pb-20 md:pb-0">
+        <StarBackground />
         
         {/* Desktop Header (Hidden on Mobile) */}
         <header className="hidden md:flex bg-[var(--color-background)] border-b border-[var(--color-border)] sticky top-0 z-50">
