@@ -9,6 +9,18 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ q
   const activeCat = resolvedParams.cat;
 
   const categories = await getCategories();
+
+  // Helper to safely build URL search params without "undefined" strings
+  const buildParams = (newParams: Record<string, string | undefined>) => {
+    const params = new URLSearchParams();
+    const merged = { ...resolvedParams, ...newParams };
+    for (const [key, value] of Object.entries(merged)) {
+      if (value !== undefined && value !== '') {
+        params.set(key, value);
+      }
+    }
+    return params.toString();
+  };
   
   // Quick in-memory filter for category since we don't have it in getListings yet
   let listings = await getListings(q, block);
@@ -16,13 +28,15 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ q
     listings = listings.filter(l => l.category_id === activeCat);
   }
 
+  const HOSTEL_BLOCKS = ["Adhiyaman", "Nelson Mandela", "Paari", "Oori", "Kaari", "Manoranjitham", "Agasthyar", "Sannasi"];
+
   return (
     <div className="pt-6 px-4 md:px-0 flex flex-col md:flex-row gap-8 items-start pb-24 md:pb-8">
       
       {/* Main Content (Left Side) */}
       <div className="flex-1 w-full space-y-6">
-        {/* Search Bar */}
-        <form action="/" className="flex items-center gap-3 group">
+        {/* Search Bar & Mobile Filters */}
+        <form action="/" className="flex flex-col sm:flex-row gap-3 group">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-muted)] group-focus-within:text-[var(--color-accent)] transition-colors duration-300" />
             <input
@@ -34,20 +48,27 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ q
               className="w-full bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full py-3.5 pl-12 pr-4 text-[var(--color-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all duration-300 shadow-sm focus:shadow-md placeholder:text-[var(--color-muted)]"
             />
           </div>
-          <button type="button" aria-label="Filters" className="w-12 h-12 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] flex items-center justify-center hover:bg-[var(--color-surface-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm">
-            <SlidersHorizontal className="w-5 h-5 text-[var(--color-foreground)]" />
-          </button>
+          <div className="flex gap-2">
+            <select name="block" defaultValue={block || ""} className="md:hidden bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full px-4 py-3 text-sm text-[var(--color-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]">
+              <option value="">All Hostels</option>
+              {HOSTEL_BLOCKS.map(b => <option key={b} value={b}>{b}</option>)}
+            </select>
+            <input type="hidden" name="cat" value={activeCat || ""} />
+            <button type="submit" aria-label="Filters" className="w-12 h-12 shrink-0 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] flex items-center justify-center hover:bg-[var(--color-surface-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm">
+              <SlidersHorizontal className="w-5 h-5 text-[var(--color-foreground)]" />
+            </button>
+          </div>
         </form>
 
         {/* Mobile Categories (Horizontal) */}
         <div className="md:hidden flex overflow-x-auto hide-scrollbar gap-3 pb-2 -mx-4 px-4">
-          <Link href="/" className={`shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] ${!activeCat ? 'bg-[var(--color-foreground)] text-[var(--color-background)] scale-105' : 'bg-transparent border border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:border-[var(--color-foreground)]'}`}>
+          <Link href={`/?${buildParams({cat: ''})}`} className={`shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] ${!activeCat ? 'bg-[var(--color-foreground)] text-[var(--color-background)] scale-105' : 'bg-transparent border border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:border-[var(--color-foreground)]'}`}>
             All
           </Link>
           {categories.map((cat: { id: string, name: string }) => (
             <Link 
               key={cat.id} 
-              href={`/?cat=${cat.id}`}
+              href={`/?${buildParams({cat: cat.id})}`}
               className={`shrink-0 px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] ${activeCat === cat.id ? 'bg-[var(--color-foreground)] text-[var(--color-background)] scale-105' : 'bg-transparent border border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:border-[var(--color-foreground)]'}`}
             >
               {cat.name}
@@ -57,7 +78,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ q
 
         {/* Listings Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 pt-2">
-          {listings.map((listing: { id: string, title: string, price: number, condition: string, photo_urls: string[] }) => (
+          {listings.map((listing: { id: string, title: string, price: number, condition: string, photo_urls: string[], seller: { hostel_block: string } }) => (
             <Link href={`/listing/${listing.id}`} key={listing.id} className="group flex flex-col gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded-[24px]">
               <div className="aspect-[4/5] rounded-[24px] overflow-hidden bg-[var(--color-surface)] border border-[var(--color-border)] relative shadow-sm group-hover:shadow-md transition-shadow duration-500">
                 <img 
@@ -65,6 +86,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ q
                   alt={listing.title} 
                   className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
                 />
+                {listing.seller?.hostel_block && (
+                  <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white text-xs font-medium px-2.5 py-1 rounded-full border border-white/10">
+                    {listing.seller.hostel_block}
+                  </div>
+                )}
               </div>
               <div className="px-1 flex justify-between items-start group-hover:translate-x-1 transition-transform duration-300">
                 <div>
@@ -89,26 +115,53 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ q
         </div>
       </div>
 
-      {/* Desktop Categories Sidebar (Right Side) */}
-      <aside className="hidden md:flex w-64 shrink-0 flex-col gap-4 sticky top-24">
-        <h3 className="text-sm font-semibold text-[var(--color-muted)] uppercase tracking-wider px-2">Categories</h3>
-        <div className="flex flex-col gap-1.5">
-          <Link 
-            href="/" 
-            className={`px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-300 flex items-center gap-3 ${!activeCat ? 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-foreground)] shadow-sm translate-x-2' : 'text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-hover)]'}`}
-          >
-            All Categories
-          </Link>
-          {categories.map((cat: { id: string, name: string }) => (
+      {/* Desktop Sidebar Filters (Right Side) */}
+      <aside className="hidden md:flex w-64 shrink-0 flex-col gap-8 sticky top-24">
+        
+        {/* Categories Section */}
+        <div>
+          <h3 className="text-sm font-semibold text-[var(--color-muted)] uppercase tracking-wider px-2 mb-3">Categories</h3>
+          <div className="flex flex-col gap-1.5">
             <Link 
-              key={cat.id} 
-              href={`/?cat=${cat.id}`}
-              className={`px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-300 flex items-center gap-3 ${activeCat === cat.id ? 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-foreground)] shadow-sm translate-x-2' : 'text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-hover)]'}`}
+              href={`/?${buildParams({cat: ''})}`} 
+              className={`px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-300 flex items-center gap-3 ${!activeCat ? 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-foreground)] shadow-sm translate-x-2' : 'text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-hover)]'}`}
             >
-              {cat.name}
+              All Categories
             </Link>
-          ))}
+            {categories.map((cat: { id: string, name: string }) => (
+              <Link 
+                key={cat.id} 
+                href={`/?${buildParams({cat: cat.id})}`}
+                className={`px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-300 flex items-center gap-3 ${activeCat === cat.id ? 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-foreground)] shadow-sm translate-x-2' : 'text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-hover)]'}`}
+              >
+                {cat.name}
+              </Link>
+            ))}
+          </div>
         </div>
+
+        {/* Hostels Section */}
+        <div>
+          <h3 className="text-sm font-semibold text-[var(--color-muted)] uppercase tracking-wider px-2 mb-3">Hostel Block</h3>
+          <div className="flex flex-col gap-1.5">
+            <Link 
+              href={`/?${buildParams({block: ''})}`} 
+              className={`px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-300 flex items-center gap-3 ${!block ? 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-foreground)] shadow-sm translate-x-2' : 'text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-hover)]'}`}
+            >
+              All Hostels
+            </Link>
+            {HOSTEL_BLOCKS.map((b) => (
+              <Link 
+                key={b} 
+                href={`/?${buildParams({block: b})}`}
+                className={`px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-300 flex items-center gap-3 ${block === b ? 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-foreground)] shadow-sm translate-x-2' : 'text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-surface-hover)]'}`}
+              >
+                {b}
+              </Link>
+            ))}
+          </div>
+        </div>
+
       </aside>
 
       {/* Mobile Create Button */}
