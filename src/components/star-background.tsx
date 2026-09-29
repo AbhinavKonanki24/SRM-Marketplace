@@ -9,8 +9,8 @@ export default function StarBackground() {
     // Generate stars on client-side only to prevent hydration mismatch
     const newStars = Array.from({ length: 40 }).map((_, i) => ({
       id: i,
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * -20}%`, // Start slightly above viewport
+      left: `${Math.random() * 150 - 50}%`, // Start further left for diagonal movement
+      top: `${Math.random() * -50}%`, // Start higher up
       delay: `${Math.random() * 10}s`,
       duration: `${Math.random() * 5 + 5}s`, // 5 to 10 seconds to fall
       size: `${Math.random() * 2 + 1}px`
