@@ -52,10 +52,15 @@ export async function signup(formData: FormData) {
     redirect('/error?message=Only SRM students (@srmist.edu.in) can sign up.')
   }
 
-  const { error } = await supabase.auth.signUp(data)
+  const { data: authData, error } = await supabase.auth.signUp(data)
 
   if (error) {
     redirect('/error?message=' + encodeURIComponent(error.message))
+  }
+
+  // If email confirmation is enabled, session will be null
+  if (!authData.session) {
+    redirect('/error?message=' + encodeURIComponent('Account created! Please check your email to verify your account before signing in.'))
   }
 
   revalidatePath('/', 'layout')
