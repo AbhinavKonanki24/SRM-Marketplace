@@ -1,13 +1,13 @@
-import { login, signup } from './actions'
+import { signup } from '@/app/login/actions'
 
-export default function LoginPage() {
+export default function SignupPage() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 md:px-0">
       <div className="bg-[var(--color-surface)] rounded-3xl border border-[var(--color-border)] w-full max-w-md p-8 md:p-10 shadow-sm">
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold mb-3 text-[var(--color-foreground)] tracking-tight">Welcome Back</h1>
+          <h1 className="text-3xl font-bold mb-3 text-[var(--color-foreground)] tracking-tight">Create Account</h1>
           <p className="text-[var(--color-muted)] text-sm">
-            Sign in with your @srmist.edu.in email to buy and sell on campus.
+            Sign up with your @srmist.edu.in email to join the marketplace.
           </p>
         </div>
 
@@ -44,18 +44,18 @@ export default function LoginPage() {
 
           <div className="mt-6 flex flex-col gap-3">
             <button
-              formAction={login}
+              formAction={signup}
               className="w-full py-4 rounded-xl font-semibold bg-[var(--color-accent)] text-[var(--color-accent-foreground)] hover:bg-[var(--color-accent-hover)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-accent)]"
             >
-              Sign In
+              Create Account
             </button>
           </div>
         </form>
 
         <div className="mt-10 text-center text-sm text-[var(--color-muted)]">
-          Don&apos;t have an account?{' '}
-          <a href="/signup" className="text-[var(--color-foreground)] font-semibold hover:underline">
-            Create Account
+          Already have an account?{' '}
+          <a href="/login" className="text-[var(--color-foreground)] font-semibold hover:underline">
+            Sign In
           </a>
         </div>
       </div>
