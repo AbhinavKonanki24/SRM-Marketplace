@@ -1,8 +1,17 @@
 import { getListings, getCategories } from '@/lib/data'
 import Link from 'next/link'
 import { Search, SlidersHorizontal, Plus } from 'lucide-react'
+import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ q?: string, block?: string, cat?: string }> }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect('/login');
+  }
+
   const resolvedParams = await searchParams;
   const q = resolvedParams.q;
   const block = resolvedParams.block;
