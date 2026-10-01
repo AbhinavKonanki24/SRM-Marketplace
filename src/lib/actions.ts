@@ -48,7 +48,7 @@ export async function createListing(formData: FormData) {
       const fileName = `${Math.random().toString(36).substring(2, 15)}.${ext}`;
       const filePath = `${user.id}/${fileName}`;
 
-      const { data, error } = await supabase.storage
+      const { data } = await supabase.storage
         .from('listing-photos')
         .upload(filePath, photo);
 

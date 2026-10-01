@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { ImagePlus, Info } from 'lucide-react'
+import { Info } from 'lucide-react'
 import { createListing } from '@/lib/actions'
 import { getCategories } from '@/lib/data'
 

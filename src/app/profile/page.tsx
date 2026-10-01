@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { updateProfile } from '@/lib/actions'
-import { BadgeCheck, UserCircle, LogOut } from 'lucide-react'
+import { BadgeCheck, UserCircle } from 'lucide-react'
 import { getActiveListingsByUser, getUserProfile } from '@/lib/data'
 import Link from 'next/link'
 
