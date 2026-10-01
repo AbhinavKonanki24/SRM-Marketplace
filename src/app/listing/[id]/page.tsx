@@ -1,6 +1,6 @@
 import { getListingById } from '@/lib/data';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, MessageSquare, Info } from 'lucide-react';
+import { ArrowLeft, MessageSquare, Info, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { startConversation, deleteListing, markAsSold } from '@/lib/actions';
 import { createClient } from '@/utils/supabase/server';
@@ -72,9 +72,14 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted)] text-sm flex gap-3 shadow-sm">
+        <div className="p-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted)] text-sm flex gap-3 shadow-sm mb-4">
            <Info size={18} className="shrink-0 mt-0.5 text-[var(--color-accent)]" />
            <p>Exchange method: <span className="capitalize font-medium text-[var(--color-foreground)]">{listing.exchange_method}</span>. Contact seller to arrange a meeting and reveal room details securely.</p>
+        </div>
+
+        <div className="p-4 rounded-2xl border border-amber-500/20 bg-amber-500/10 text-amber-500 text-sm flex gap-3 shadow-sm">
+           <AlertTriangle size={18} className="shrink-0 mt-0.5" />
+           <p><strong>Safety Warning:</strong> SRM Marketplace does not handle payments. All transactions are offline. Please verify the item in person before making any payment (UPI/Cash). Never pay in advance.</p>
         </div>
       </div>
 

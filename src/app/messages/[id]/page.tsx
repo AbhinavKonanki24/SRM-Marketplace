@@ -65,9 +65,15 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
       <div className="flex-1 p-4 overflow-y-auto space-y-4 flex flex-col">
         
         <div className="flex justify-center my-4">
-          <div className="px-4 py-2 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] text-[10px] text-[var(--color-muted)] text-center max-w-[80%] flex items-center gap-2">
-            <Info size={14} className="shrink-0" />
-            Arrange offline exchange here. Seller room details are hidden until the seller shares them.
+          <div className="flex flex-col gap-2 max-w-[80%]">
+            <div className="px-4 py-2 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] text-[10px] text-[var(--color-muted)] text-center flex items-center gap-2">
+              <Info size={14} className="shrink-0" />
+              Arrange offline exchange here. Seller room details are hidden until the seller shares them.
+            </div>
+            <div className="px-4 py-2 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-[10px] text-amber-500 text-center flex items-center gap-2">
+              <AlertTriangle size={14} className="shrink-0" />
+              No online payments. Only pay in-person via Cash/UPI after checking the item.
+            </div>
           </div>
         </div>
 
