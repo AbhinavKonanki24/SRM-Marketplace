@@ -1,9 +1,10 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { updateProfile } from '@/lib/actions'
-import { BadgeCheck, UserCircle } from 'lucide-react'
+import { BadgeCheck, UserCircle, LogOut } from 'lucide-react'
 import { getActiveListingsByUser, getUserProfile } from '@/lib/data'
 import Link from 'next/link'
+import { signOutUser } from '@/lib/actions'
 
 export default async function ProfilePage({ searchParams }: { searchParams: Promise<{ success?: string, message?: string }> }) {
   const resolvedParams = await searchParams;
@@ -27,17 +28,24 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
           {resolvedParams.message}
         </div>
       )}
-      <div className="flex items-center gap-5">
-        <div className="w-20 h-20 rounded-full bg-[var(--color-surface)] flex items-center justify-center border border-[var(--color-border)] shadow-sm">
-          <UserCircle size={40} className="text-[var(--color-muted)]" />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-5">
+          <div className="w-20 h-20 rounded-full bg-[var(--color-surface)] flex items-center justify-center border border-[var(--color-border)] shadow-sm">
+            <UserCircle size={40} className="text-[var(--color-muted)]" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-[var(--color-foreground)] flex items-center gap-2">
+              {fullProfile?.name || 'Your Profile'}
+              <BadgeCheck className="text-emerald-500" size={20} />
+            </h1>
+            <p className="text-[var(--color-muted)] text-sm">{fullProfile?.email}</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-2xl font-bold text-[var(--color-foreground)] flex items-center gap-2">
-            {fullProfile?.name || 'Your Profile'}
-            <BadgeCheck className="text-emerald-500" size={20} />
-          </h1>
-          <p className="text-[var(--color-muted)] text-sm">{fullProfile?.email}</p>
-        </div>
+        <form action={signOutUser}>
+          <button type="submit" className="p-3 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 text-[var(--color-muted)] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 shadow-sm" aria-label="Sign out">
+            <LogOut size={20} />
+          </button>
+        </form>
       </div>
 
       <div className="space-y-6">

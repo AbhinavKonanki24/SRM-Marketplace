@@ -262,3 +262,9 @@ export async function markAsSold(listingId: string) {
   revalidatePath('/', 'layout');
   redirect(`/listing/${listingId}`);
 }
+
+export async function signOutUser() {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  redirect('/login');
+}
