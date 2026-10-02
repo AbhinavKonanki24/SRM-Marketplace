@@ -2,6 +2,7 @@ import { getConversations } from '@/lib/data'
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import { MessageSquare } from 'lucide-react'
+import Avatar from '@/components/avatar'
 
 export default async function MessagesIndexPage() {
   const conversations = await getConversations();
@@ -38,9 +39,7 @@ export default async function MessagesIndexPage() {
                 key={conv.id} 
                 className="flex items-center gap-4 p-4 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] shadow-sm"
               >
-                <div className="w-12 h-12 rounded-full bg-[var(--color-background)] border border-[var(--color-border)] flex items-center justify-center font-bold text-[var(--color-foreground)] shrink-0">
-                  {otherUser?.name?.charAt(0) || 'U'}
-                </div>
+                <Avatar userId={otherUser?.id} name={otherUser?.name || 'User'} size={48} />
                 <div className="flex-1 overflow-hidden">
                   <div className="font-semibold text-[var(--color-foreground)] truncate">{otherUser?.name}</div>
                   <div className="text-sm text-[var(--color-muted)] truncate">{conv.listing?.title}</div>

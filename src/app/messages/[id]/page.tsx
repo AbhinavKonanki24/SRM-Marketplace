@@ -3,6 +3,7 @@ import { createClient } from '@/utils/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Key, Info, ShieldCheck, AlertTriangle } from 'lucide-react'
+import Avatar from '@/components/avatar'
 import { sendMessage, grantRoomConsent } from '@/lib/actions'
 
 export default async function ConversationPage({ params }: { params: Promise<{ id: string }> }) {
@@ -29,9 +30,7 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
           <Link href="/messages" className="p-2 -ml-2 rounded-full hover:bg-[var(--color-surface-hover)] text-[var(--color-foreground)] transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-accent)] focus-visible:outline-none" aria-label="Back to messages">
             <ArrowLeft size={20} />
           </Link>
-          <div className="w-10 h-10 rounded-full bg-[var(--color-background)] border border-[var(--color-border)] flex items-center justify-center font-bold text-[var(--color-foreground)] shrink-0">
-            {otherUser?.name?.charAt(0) || 'U'}
-          </div>
+          <Avatar userId={otherUser?.id} name={otherUser?.name || 'User'} size={40} />
           <div>
             <div className="font-semibold text-[var(--color-foreground)]">{otherUser?.name}</div>
             <Link href={`/listing/${conversation.listing_id}`} className="text-xs text-[var(--color-muted)] hover:text-[var(--color-foreground)] transition-colors truncate max-w-[200px] block focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-accent)] focus-visible:outline-none">

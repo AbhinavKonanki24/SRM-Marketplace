@@ -6,6 +6,8 @@ import { getActiveListingsByUser, getUserProfile } from '@/lib/data'
 import Link from 'next/link'
 import Image from 'next/image'
 import { signOutUser } from '@/lib/actions'
+import Avatar from '@/components/avatar'
+import ProfilePhotoEditor from '@/components/profile-photo-editor'
 
 export default async function ProfilePage({ searchParams }: { searchParams: Promise<{ success?: string, message?: string }> }) {
   const resolvedParams = await searchParams;
@@ -31,9 +33,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
       )}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-5">
-          <div className="w-20 h-20 rounded-full bg-[var(--color-surface)] flex items-center justify-center border border-[var(--color-border)] shadow-sm">
-            <UserCircle size={40} className="text-[var(--color-muted)]" />
-          </div>
+          <Avatar userId={user.id} name={fullProfile?.name || 'User'} size={80} />
           <div>
             <h1 className="text-2xl font-bold text-[var(--color-foreground)] flex items-center gap-2">
               {fullProfile?.name || 'Your Profile'}
@@ -50,18 +50,22 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
       </div>
 
       <div className="space-y-6">
-        <form action={updateProfile} className="space-y-6">
+        <form action={updateProfile} className="space-y-6" encType="multipart/form-data">
           <h2 className="text-lg font-bold text-white">Profile Details</h2>
           
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-[var(--color-muted)]">Display Name</label>
-            <input 
-              name="name"
-              defaultValue={fullProfile?.name || ''}
-              placeholder="e.g. Rahul Sharma"
-              required
-              className="w-full px-4 py-3.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-colors"
-            />
+          <div className="flex flex-col sm:flex-row sm:items-center gap-6 mb-2">
+            <ProfilePhotoEditor userId={user.id} initialName={fullProfile?.name || 'User'} />
+            
+            <div className="flex-1 space-y-2 w-full">
+              <label className="text-sm font-medium text-[var(--color-muted)]">Display Name</label>
+              <input 
+                name="name"
+                defaultValue={fullProfile?.name || ''}
+                placeholder="e.g. Rahul Sharma"
+                required
+                className="w-full px-4 py-3.5 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-colors"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

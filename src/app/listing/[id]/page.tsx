@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft, MessageSquare, Info, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import Avatar from '@/components/avatar';
 import { startConversation, deleteListing, markAsSold } from '@/lib/actions';
 import { createClient } from '@/utils/supabase/server';
 
@@ -70,9 +71,7 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
         </p>
 
         <div className="flex items-center gap-4 p-4 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] mb-8 shadow-sm">
-          <div className="w-12 h-12 rounded-full bg-[var(--color-background)] border border-[var(--color-border)] flex items-center justify-center font-bold text-[var(--color-foreground)] shrink-0">
-            {listing.seller?.name?.charAt(0) || 'U'}
-          </div>
+          <Avatar userId={listing.seller?.id} name={listing.seller?.name || 'Student'} size={48} />
           <div className="flex-1">
             <div className="text-xs text-[var(--color-muted)]">Seller</div>
             <div className="font-medium text-[var(--color-foreground)]">{listing.seller?.name || 'Student'}</div>

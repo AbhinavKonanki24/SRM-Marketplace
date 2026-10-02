@@ -135,6 +135,31 @@ export async function updateProfile(formData: FormData) {
     redirect('/error?message=Failed to update private profile');
   }
 
+  const photo = formData.get('photo') as File | null;
+  if (photo && photo.size > 0) {
+    const validMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (photo.size < 5 * 1024 * 1024 && validMimeTypes.includes(photo.type)) {
+      // Overwrite the avatar file for this user
+      const filePath = `${user.id}/avatar`;
+      const { error: uploadError } = await supabase.storage
+        .from('listing-photos')
+        .upload(filePath, photo, { upsert: true, contentType: photo.type });
+        
+      if (uploadError) {
+        console.error("Avatar upload error:", uploadError);
+        redirect('/error?message=Failed to upload profile photo');
+      }
+    } else {
+      redirect('/error?message=Invalid photo type or size exceeds 5MB');
+    }
+  }
+
+  const removePhoto = formData.get('remove_photo') as string;
+  if (removePhoto === 'true') {
+    const filePath = `${user.id}/avatar`;
+    await supabase.storage.from('listing-photos').remove([filePath]);
+  }
+
   revalidatePath('/', 'layout');
   redirect('/profile?success=true');
 }
