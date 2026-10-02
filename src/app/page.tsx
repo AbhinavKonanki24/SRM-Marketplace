@@ -4,7 +4,7 @@ import { Search, SlidersHorizontal, Plus } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ q?: string, block?: string, cat?: string }> }) {
+export default async function Home({ searchParams }: { searchParams: Promise<{ q?: string, block?: string, cat?: string, focus?: string }> }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -16,6 +16,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ q
   const q = resolvedParams.q;
   const block = resolvedParams.block;
   const activeCat = resolvedParams.cat;
+  const shouldFocusSearch = resolvedParams.focus === 'search';
 
   const categories = await getCategories();
 
@@ -24,7 +25,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ q
     const params = new URLSearchParams();
     const merged = { ...resolvedParams, ...newParams };
     for (const [key, value] of Object.entries(merged)) {
-      if (value !== undefined && value !== '') {
+      if (value !== undefined && value !== '' && key !== 'focus') {
         params.set(key, value);
       }
     }
@@ -49,9 +50,12 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ q
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-muted)] group-focus-within:text-[var(--color-accent)] transition-colors duration-300" />
             <input
+              key={shouldFocusSearch ? 'focus-true' : 'focus-false'}
               type="text"
               name="q"
+              id="search-input"
               defaultValue={q}
+              autoFocus={shouldFocusSearch}
               placeholder="Search"
               aria-label="Search listings"
               className="w-full bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full py-3.5 pl-12 pr-4 text-[var(--color-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all duration-300 shadow-sm focus:shadow-md placeholder:text-[var(--color-muted)]"
