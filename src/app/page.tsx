@@ -117,7 +117,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ q
           ))}
 
           {listings.length === 0 && (
-            <div className="col-span-full py-24 flex flex-col items-center justify-center text-center opacity-0 animate-in fade-in zoom-in duration-500">
+            <div className="col-span-full py-24 flex flex-col items-center justify-center text-center">
               <div className="w-16 h-16 rounded-full bg-[var(--color-surface)] flex items-center justify-center mb-4 border border-[var(--color-border)] shadow-sm">
                 <Search className="w-6 h-6 text-[var(--color-muted)]" />
               </div>

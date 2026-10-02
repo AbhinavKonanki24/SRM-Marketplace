@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
-import { Home, Search, MessageSquare, User } from 'lucide-react'
 import StarBackground from '@/components/star-background'
+import BottomNav from '@/components/bottom-nav'
 
 export const metadata: Metadata = {
   title: 'SRM Campus Marketplace',
@@ -48,36 +48,7 @@ export default async function RootLayout({
           {children}
         </main>
 
-        {/* Mobile Bottom Navigation (Hidden on Desktop) */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[var(--color-surface)] border-t border-[var(--color-border)] pb-safe z-50">
-          <div className="flex justify-around items-center h-16">
-            <Link href="/" className="flex flex-col items-center gap-1 text-[var(--color-muted)] hover:text-[var(--color-foreground)] w-full">
-              <Home size={20} />
-              <span className="text-[10px] font-medium">Home</span>
-            </Link>
-            <Link href="/?focus=search" className="flex flex-col items-center gap-1 text-[var(--color-muted)] hover:text-[var(--color-foreground)] w-full">
-              <Search size={20} />
-              <span className="text-[10px] font-medium">Search</span>
-            </Link>
-            {user ? (
-              <>
-                <Link href="/messages" className="flex flex-col items-center gap-1 text-[var(--color-muted)] hover:text-[var(--color-foreground)] w-full">
-                  <MessageSquare size={20} />
-                  <span className="text-[10px] font-medium">Chat</span>
-                </Link>
-                <Link href="/profile" className="flex flex-col items-center gap-1 text-[var(--color-muted)] hover:text-[var(--color-foreground)] w-full">
-                  <User size={20} />
-                  <span className="text-[10px] font-medium">Profile</span>
-                </Link>
-              </>
-            ) : (
-               <Link href="/login" className="flex flex-col items-center gap-1 text-[var(--color-muted)] hover:text-[var(--color-foreground)] w-full">
-                  <User size={20} />
-                  <span className="text-[10px] font-medium">Log In</span>
-                </Link>
-            )}
-          </div>
-        </nav>
+        <BottomNav user={user} />
       </body>
     </html>
   )
