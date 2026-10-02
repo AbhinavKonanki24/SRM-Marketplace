@@ -8,6 +8,10 @@ export default async function MessagesIndexPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  if (!user) {
+    import('next/navigation').then(m => m.redirect('/login'));
+  }
+
   return (
     <div className="pt-6 px-4 md:px-0 space-y-6">
       <h1 className="text-2xl font-bold text-[var(--color-foreground)] mb-6">Messages</h1>

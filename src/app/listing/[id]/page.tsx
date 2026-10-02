@@ -2,6 +2,7 @@ import { getListingById } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, MessageSquare, Info, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { startConversation, deleteListing, markAsSold } from '@/lib/actions';
 import { createClient } from '@/utils/supabase/server';
 
@@ -13,6 +14,11 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    import('next/navigation').then(m => m.redirect('/login'));
+  }
+
   const isSeller = user?.id === listing.seller?.id;
 
   return (
@@ -26,9 +32,10 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
 
       {/* Image Area */}
       <div className="w-full aspect-square md:aspect-auto md:h-[60vh] bg-[var(--color-surface)] relative overflow-hidden">
-        <img 
-          src={listing.photo_urls?.[0]} 
+        <Image 
+          src={listing.photo_urls?.[0] || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800&auto=format&fit=crop'} 
           alt={listing.title}
+          fill
           className="w-full h-full object-cover"
         />
         

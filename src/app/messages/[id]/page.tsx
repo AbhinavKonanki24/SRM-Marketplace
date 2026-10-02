@@ -2,7 +2,7 @@ import { getConversationById, getMessages } from '@/lib/data'
 import { createClient } from '@/utils/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Key, Info, ShieldCheck } from 'lucide-react'
+import { ArrowLeft, Key, Info, ShieldCheck, AlertTriangle } from 'lucide-react'
 import { sendMessage, grantRoomConsent } from '@/lib/actions'
 
 export default async function ConversationPage({ params }: { params: Promise<{ id: string }> }) {

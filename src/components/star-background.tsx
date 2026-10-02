@@ -15,9 +15,9 @@ export default function StarBackground() {
       duration: `${Math.random() * 5 + 5}s`, // 5 to 10 seconds to fall
       size: `${Math.random() * 2 + 1}px`
     }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // @ts-ignore
-    setStars(newStars);
+    setTimeout(() => {
+      setStars(newStars);
+    }, 0);
   }, []);
 
   if (stars.length === 0) return null;

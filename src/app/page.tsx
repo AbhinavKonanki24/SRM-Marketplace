@@ -1,5 +1,6 @@
 import { getListings, getCategories } from '@/lib/data'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Search, SlidersHorizontal, Plus } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
@@ -94,9 +95,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ q
           {listings.map((listing: { id: string, title: string, price: number, condition: string, photo_urls: string[], seller: { hostel_block: string } }) => (
             <Link href={`/listing/${listing.id}`} key={listing.id} className="group flex flex-col gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded-[24px]">
               <div className="aspect-[4/5] rounded-[24px] overflow-hidden bg-[var(--color-surface)] border border-[var(--color-border)] relative shadow-sm group-hover:shadow-md transition-shadow duration-500">
-                <img 
+                <Image 
                   src={listing.photo_urls?.[0] || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800&auto=format&fit=crop'} 
                   alt={listing.title} 
+                  fill
                   className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
                 />
                 {listing.seller?.hostel_block && (

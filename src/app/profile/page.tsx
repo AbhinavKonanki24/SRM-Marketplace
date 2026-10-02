@@ -4,6 +4,7 @@ import { updateProfile } from '@/lib/actions'
 import { BadgeCheck, UserCircle, LogOut } from 'lucide-react'
 import { getActiveListingsByUser, getUserProfile } from '@/lib/data'
 import Link from 'next/link'
+import Image from 'next/image'
 import { signOutUser } from '@/lib/actions'
 
 export default async function ProfilePage({ searchParams }: { searchParams: Promise<{ success?: string, message?: string }> }) {
@@ -119,7 +120,12 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
               {activeListings.map(listing => (
                 <Link href={`/listing/${listing.id}`} key={listing.id} className="block group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded-2xl">
                   <div className="aspect-square rounded-2xl overflow-hidden bg-[var(--color-surface)] border border-[var(--color-border)] mb-2 relative">
-                     <img src={listing.photo_urls[0]} alt={listing.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                     <Image 
+                       src={listing.photo_urls?.[0] || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800&auto=format&fit=crop'} 
+                       alt={listing.title} 
+                       fill
+                       className="object-cover w-full h-full group-hover:scale-105 transition-transform" 
+                     />
                   </div>
                   <h3 className="font-medium text-[var(--color-foreground)] text-sm truncate">{listing.title}</h3>
                   <p className="text-[var(--color-muted)] text-xs">₹{listing.price}</p>
