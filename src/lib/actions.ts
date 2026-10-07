@@ -293,7 +293,7 @@ export async function approveListing(listingId: string) {
   const { data: { user } } = await supabase.auth.getUser();
 
   // Basic admin check (this should match the check in data.ts)
-  const ADMIN_EMAILS = ['abhi@srmist.edu.in'];
+  const ADMIN_EMAILS = ['ak0902@srmist.edu.in', 'abhi@srmist.edu.in'];
   if (!user || !ADMIN_EMAILS.includes(user.email || '')) {
     redirect('/error?message=Unauthorized');
   }
@@ -312,7 +312,7 @@ export async function rejectListing(listingId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const ADMIN_EMAILS = ['abhi@srmist.edu.in'];
+  const ADMIN_EMAILS = ['ak0902@srmist.edu.in', 'abhi@srmist.edu.in'];
   if (!user || !ADMIN_EMAILS.includes(user.email || '')) {
     redirect('/error?message=Unauthorized');
   }

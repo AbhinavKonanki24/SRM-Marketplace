@@ -70,7 +70,7 @@ export default function BottomNav({ user }: { user: any }) {
               <User size={20} />
               <span className="text-[10px] font-medium">Profile</span>
             </Link>
-            {user?.email === 'abhi@srmist.edu.in' && (
+            {(user?.email === 'ak0902@srmist.edu.in' || user?.email === 'abhi@srmist.edu.in') && (
               <Link 
                 href="/admin" 
                 className={`flex flex-col items-center gap-1 w-full transition-colors ${pathname === '/admin' ? 'text-amber-500' : 'text-[var(--color-muted)] hover:text-amber-500'}`}

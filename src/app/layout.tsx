@@ -35,7 +35,7 @@ export default async function RootLayout({
                 <>
                   <Link href="/messages" className="text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-foreground)] transition-colors">Messages</Link>
                   <Link href="/profile" className="text-sm font-medium text-[var(--color-muted)] hover:text-[var(--color-foreground)] transition-colors">Profile</Link>
-                  {user.email === 'abhi@srmist.edu.in' && (
+                  {(user.email === 'ak0902@srmist.edu.in' || user.email === 'abhi@srmist.edu.in') && (
                     <Link href="/admin" className="text-sm font-medium text-amber-500 hover:text-amber-400 transition-colors">Admin</Link>
                   )}
                   <Link href="/create-listing" className="text-sm font-medium bg-[var(--color-accent)] text-[var(--color-accent-foreground)] px-4 py-2 rounded-full hover:bg-[var(--color-accent-hover)] transition-colors">Post Item</Link>

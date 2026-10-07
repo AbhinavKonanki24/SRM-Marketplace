@@ -1,7 +1,7 @@
 import 'server-only';
 import { createClient } from '@/utils/supabase/server';
 
-export const ADMIN_EMAILS = ['abhi@srmist.edu.in'];
+export const ADMIN_EMAILS = ['ak0902@srmist.edu.in', 'abhi@srmist.edu.in'];
 
 export async function isAdmin() {
   const supabase = await createClient();
