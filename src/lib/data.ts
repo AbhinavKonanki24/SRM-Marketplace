@@ -1,12 +1,21 @@
 import 'server-only';
 import { createClient } from '@/utils/supabase/server';
 
+export const ADMIN_EMAILS = ['abhi@srmist.edu.in'];
+
+export async function isAdmin() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
+  return ADMIN_EMAILS.includes(user.email || '');
+}
+
 export async function getListings(search?: string, hostelBlock?: string, categoryId?: string) {
   const supabase = await createClient();
   let query = supabase.from('listings').select(`
     *,
     seller:profiles(id, name, hostel_block)
-  `).eq('status', 'available').order('created_at', { ascending: false });
+  `).eq('status', 'available').eq('approval_status', 'approved').order('created_at', { ascending: false });
 
   if (search) {
     query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
@@ -28,14 +37,42 @@ export async function getListings(search?: string, hostelBlock?: string, categor
   return data;
 }
 
+export async function getPendingListings() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || !ADMIN_EMAILS.includes(user.email || '')) return [];
+
+  const { data, error } = await supabase.from('listings').select(`
+    *,
+    seller:profiles(id, name, hostel_block)
+  `).eq('approval_status', 'pending').order('created_at', { ascending: false });
+
+  if (error) {
+    console.error("Error fetching pending listings:", error);
+    return [];
+  }
+  return data;
+}
+
 export async function getListingById(id: string) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
   const { data, error } = await supabase.from('listings').select(`
     *,
     seller:profiles(id, name, hostel_block)
   `).eq('id', id).single();
   
-  if (error) return null;
+  if (error || !data) return null;
+
+  // If the listing is not approved, only the seller or an admin can view it
+  if (data.approval_status !== 'approved') {
+    if (!user) return null;
+    const isSeller = data.seller_id === user.id;
+    const isAdminUser = ADMIN_EMAILS.includes(user.email || '');
+    if (!isSeller && !isAdminUser) return null;
+  }
+
   return data;
 }
 
@@ -59,7 +96,7 @@ export async function getUserProfile(userId: string) {
 
 export async function getActiveListingsByUser(userId: string) {
   const supabase = await createClient();
-  const { data } = await supabase.from('listings').select('*').eq('seller_id', userId).eq('status', 'available');
+  const { data } = await supabase.from('listings').select('*').eq('seller_id', userId).order('created_at', { ascending: false });
   return data || [];
 }
 

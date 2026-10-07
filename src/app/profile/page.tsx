@@ -132,7 +132,15 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
                      />
                   </div>
                   <h3 className="font-medium text-[var(--color-foreground)] text-sm truncate">{listing.title}</h3>
-                  <p className="text-[var(--color-muted)] text-xs">₹{listing.price}</p>
+                  <div className="flex justify-between items-center mt-1">
+                    <p className="text-[var(--color-muted)] text-xs">₹{listing.price}</p>
+                    {listing.approval_status === 'pending' && (
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20">Pending</span>
+                    )}
+                    {listing.approval_status === 'rejected' && (
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-red-500/10 text-red-500 border border-red-500/20">Rejected</span>
+                    )}
+                  </div>
                 </Link>
               ))}
             </div>

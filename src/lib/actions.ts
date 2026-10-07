@@ -288,6 +288,45 @@ export async function markAsSold(listingId: string) {
   redirect(`/listing/${listingId}`);
 }
 
+export async function approveListing(listingId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // Basic admin check (this should match the check in data.ts)
+  const ADMIN_EMAILS = ['abhi@srmist.edu.in'];
+  if (!user || !ADMIN_EMAILS.includes(user.email || '')) {
+    redirect('/error?message=Unauthorized');
+  }
+
+  const { error } = await supabase.from('listings').update({ approval_status: 'approved' }).eq('id', listingId);
+  
+  if (error) {
+    redirect('/error?message=Failed to approve listing');
+  }
+  
+  revalidatePath('/', 'layout');
+  redirect('/admin');
+}
+
+export async function rejectListing(listingId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const ADMIN_EMAILS = ['abhi@srmist.edu.in'];
+  if (!user || !ADMIN_EMAILS.includes(user.email || '')) {
+    redirect('/error?message=Unauthorized');
+  }
+
+  const { error } = await supabase.from('listings').update({ approval_status: 'rejected' }).eq('id', listingId);
+  
+  if (error) {
+    redirect('/error?message=Failed to reject listing');
+  }
+  
+  revalidatePath('/', 'layout');
+  redirect('/admin');
+}
+
 export async function signOutUser() {
   const supabase = await createClient();
   await supabase.auth.signOut();
