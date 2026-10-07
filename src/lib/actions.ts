@@ -259,10 +259,48 @@ export async function deleteListing(listingId: string) {
   const parsedId = z.string().uuid().safeParse(listingId);
   if (!parsedId.success) redirect('/error?message=Invalid listing ID');
 
+  // Fetch the listing first to get its photo URLs
+  const { data: listing, error: fetchError } = await supabase
+    .from('listings')
+    .select('photo_urls')
+    .eq('id', listingId)
+    .eq('seller_id', user.id)
+    .single();
+
+  if (fetchError || !listing) {
+    redirect('/error?message=Listing not found or unauthorized');
+  }
+
+  // Delete the database row
   const { error } = await supabase.from('listings').delete().eq('id', listingId).eq('seller_id', user.id);
 
   if (error) {
     redirect('/error?message=Failed to delete listing');
+  }
+
+  // Clean up orphaned images in Supabase Storage
+  if (listing.photo_urls && listing.photo_urls.length > 0) {
+    const pathsToRemove = listing.photo_urls.map((url: string) => {
+      // Extract the file path relative to the bucket (e.g. "user-id/filename.ext")
+      const parts = url.split('listing-photos/');
+      if (parts.length > 1) {
+        // Handle potential query params on the URL
+        return parts[1].split('?')[0]; 
+      }
+      return null;
+    }).filter(Boolean) as string[];
+
+    if (pathsToRemove.length > 0) {
+      const { error: storageError } = await supabase.storage
+        .from('listing-photos')
+        .remove(pathsToRemove);
+        
+      if (storageError) {
+        console.error('Failed to delete some photos from storage:', storageError);
+        // Note: we don't redirect to error here because the listing is already deleted.
+        // These files are now orphaned, but the main operation succeeded.
+      }
+    }
   }
 
   revalidatePath('/', 'layout');
